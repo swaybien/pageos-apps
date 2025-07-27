@@ -1,0 +1,14 @@
+{
+  "packages": [
+    {
+      "id": "pageos-hello",
+      "name": "pageos-hello",
+      "icon": "",
+      "author": "PJ568",
+      "latest_version": "0.1.0",
+      "description": "A PageOS web application",
+      "location": "./packages/pageos-hello/0.1.0"
+    }
+  ],
+  "source": []
+}

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PageOS 应用仓库</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8IS0tIOWkluahhuefqeW9oiAtLT4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSIxMCIgcnk9IjEwIgogICAgZmlsbD0iIzQyNDI0MiIKICAgIHN0cm9rZT0iIzAwNjk1YyIKICAgIHN0cm9rZS13aWR0aD0iNCIvPgoKICA8IS0tIOW3puecvO+8muWwj+WchueCuSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE0IiByPSIxLjUiIGZpbGw9IiNmNWY1ZjUiIC8+CgogIDwhLS0g5Y+z55y877ya5bCP5ZyG54K5IC0tPgogIDxjaXJjbGUgY3g9IjIwIiBjeT0iMTQiIHI9IjEuNSIgZmlsbD0iI2Y1ZjVmNSIgLz4KCiAgPCEtLSDpvLvlrZDvvJrnq5bnur8gLS0+CiAgPGxpbmUgeDE9IjE2IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE4IiBzdHJva2U9IiNmNWY1ZjUiIHN0cm9rZS13aWR0aD0iMS41IiAvPgoKICA8IS0tIOW+rueskeeahOWYtO+8muS4iuaJrOeahOW8p+e6vyAtLT4KICA8cGF0aCBkPSJNIDE0IDIwIFEgMTYgMjIgMTggMjAiIAogICAgICAgIGZpbGw9Im5vbmUiIAogICAgICAgIHN0cm9rZT0iI2Y1ZjVmNSIgCiAgICAgICAgc3Ryb2tlLXdpZHRoPSIxLjUiIAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KPC9zdmc+"
+    />
+    <style>
+      /* 全局样式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+        color: var(--secondary-font-color);
+      }
+      ::selection {
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+      }
+      body {
+        font-family: "Maple Mono CN", "Courier New", Courier, monospace;
+        background: #424242;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+
+        --accent-color: #64ffda; /* 强调色：边框 */
+        --secondary-color: #00695c; /* 次要色：未激活边框 */
+        --danger-color: #ff6d00; /* 着重色：边框 */
+        --accent-bg-color: #009688;
+        --secondary-bg-color: #616161;
+        --content-bg-color: #424242;
+        --accent-font-color: #f5f5f5;
+        --secondary-font-color: #eeeeee;
+
+        --margin-padding: 0.5rem;
+        --border-thickness: 0.2rem;
+        --border-radius: 0.5rem;
+        --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+        --focused-bg-color: rgba(255, 255, 255, 0.1);
+      }
+      .container {
+        padding: var(--margin-padding);
+        flex: 1;
+        overflow-y: auto;
+      }
+      /* 搜索栏样式 */
+      .search-container {
+        display: flex;
+        gap: var(--margin-padding);
+        background: var(--secondary-bg-color);
+        padding: var(--margin-padding);
+        border-bottom: var(--border-thickness) solid var(--secondary-color);
+      }
+      .search-box {
+        flex: 1;
+        padding: var(--margin-padding);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--margin-padding);
+        background: var(--content-bg-color);
+        font-size: 1rem;
+      }
+      .search-box:focus {
+        --secondary-bg-color: var(--accent-bg-color);
+        --secondary-font-color: var(--accent-font-color);
+        --secondary-color: var(--accent-color);
+      }
+      .repo-button {
+        border: var(--border-thickness) solid var(--secondary-color);
+        padding: var(--margin-padding);
+        border-radius: var(--margin-padding);
+        background: var(--content-bg-color);
+      }
+      /* 应用网格样式 */
+      .apps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: calc(2 * var(--margin-padding));
+        padding: var(--margin-padding) 0;
+      }
+      .app-card {
+        background: var(--secondary-bg-color);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--margin-padding);
+        padding: var(--margin-padding);
+        text-align: center;
+        cursor: pointer;
+      }
+      a {
+        transition: all 0.2s ease;
+      }
+      a:hover {
+        border-color: var(--accent-color);
+        transform: scale(1.1);
+        z-index: 10;
+        position: relative;
+
+        .app-name {
+          white-space: initial;
+        }
+      }
+      /* 图标样式 */
+      .app-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 0.5rem;
+        background: var(--content-bg-color);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+      }
+      /* 应用信息样式 */
+      .app-name {
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .app-author {
+        font-size: 0.8rem;
+        color: #b0b0b0;
+      }
+      /* 加载状态 */
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search-container">
+      <input
+        type="text"
+        class="search-box"
+        placeholder="搜索应用..."
+        id="searchInput"
+      />
+      <a
+        href="https://github.com/swaybien/pageos-apps"
+        target="_blank"
+        class="repo-button"
+        > 仓库</a
+      >
+    </div>
+    <div class="container">
+      <div class="apps-grid" id="appsGrid">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const appsGrid = document.getElementById("appsGrid");
+        const searchInput = document.getElementById("searchInput");
+        let packages = [];
+
+        // 加载应用数据
+        async function loadPackages() {
+          try {
+            const response = await fetch("index.json");
+            const data = await response.json();
+            packages = data.packages || [];
+            renderApps(packages);
+          } catch (error) {
+            appsGrid.innerHTML = `<div class="loading">加载失败: ${error.message}</div>`;
+          }
+        }
+
+        // 渲染应用列表
+        function renderApps(appList) {
+          if (appList.length === 0) {
+            appsGrid.innerHTML = '<div class="loading">未找到匹配的应用</div>';
+            return;
+          }
+
+          appsGrid.innerHTML = appList
+            .map((pkg) => {
+              // 处理图标显示
+              let iconContent = "";
+              if (pkg.icon) {
+                // 如果有图标URL，使用img标签
+                iconContent = `<img src="${pkg.icon}" alt="${pkg.name}" style="width:100%;height:100%;object-fit:contain;">`;
+              } else {
+                // 如果没有图标，显示名称首字符
+                iconContent = pkg.name.charAt(0).toUpperCase();
+              }
+
+              return `
+              <a href="${pkg.location}/metadata.json" class="app-card" title="${
+                pkg.description || ""
+              }">
+                  <div class="app-icon">${iconContent}</div>
+                  <div class="app-name">${pkg.name}</div>
+                  <div class="app-author">作者: ${pkg.author}</div>
+              </a>`;
+            })
+            .join("");
+        }
+
+        // 搜索功能
+        searchInput.addEventListener("input", () => {
+          const query = searchInput.value.toLowerCase().trim();
+          if (!query) {
+            renderApps(packages);
+            return;
+          }
+
+          const filtered = packages.filter(
+            (pkg) =>
+              pkg.name.toLowerCase().includes(query) ||
+              pkg.author.toLowerCase().includes(query) ||
+              (pkg.description && pkg.description.toLowerCase().includes(query))
+          );
+          renderApps(filtered);
+        });
+
+        // 初始化
+        await loadPackages();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "pageos-hello",
+  "id": "pageos-hello",
+  "version": "0.1.0",
+  "description": "A PageOS web application",
+  "icon": "",
+  "author": "PJ568",
+  "type": "webapp",
+  "category": "",
+  "permissions": [],
+  "entry": "index.html",
+  "all_files": {
+    "index.html": "ecc74040554cea8ecb44458cfcd5757f1bd8c53c9bf2955d8c1f6fbf46e1497c"
+  }
+}
