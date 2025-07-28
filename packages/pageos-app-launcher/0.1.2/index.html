@@ -234,25 +234,20 @@
               ${groups[key]
                 .map(
                   (app) => `
-                <a href="${app.location}/metadata.json" class="app-item" data-id="${app.id}" data-pageos="app">
+                <a href="../../../${
+                  app.location
+                }/metadata.json" class="app-item" data-id="${
+                    app.id
+                  }" data-pageos="app">
                   <div class="app-icon">
-                    ${
-                      app.icon
-                        ? `<img src="${
-                            app.icon.startsWith("/") ? app.icon : "/" + app.icon
-                          }" alt="${
-                            app.name
-                          }" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${app.name.charAt(
-                            0
-                          )}</span>'">`
-                        : `<span class="icon-fallback">${app.name.charAt(
-                            0
-                          )}</span>`
-                    }
+                    <img src="../../../${app.location}/${app.icon}" alt="${
+                    app.name
+                  }" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${app.name.charAt(
+                    0
+                  )}</span>'">
                   </div>
                   <div class="app-name">${app.name}</div>
-                </a>
-              `
+                </a>`
                 )
                 .join("")}
             </div>
@@ -296,25 +291,20 @@
             ${filteredApps
               .map(
                 (app) => `
-              <a href="${app.location}/metadata.json" class="app-item" data-id="${app.id}" data-pageos="app">
+              <a href="../../../${
+                app.location
+              }/metadata.json" class="app-item" data-id="${
+                  app.id
+                }" data-pageos="app">
                 <div class="app-icon">
-                  ${
-                    app.icon
-                      ? `<img src="${
-                          app.icon.startsWith("/") ? app.icon : "/" + app.icon
-                        }" alt="${
-                          app.name
-                        }" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${app.name.charAt(
-                          0
-                        )}</span>'">`
-                      : `<span class="icon-fallback">${app.name.charAt(
-                          0
-                        )}</span>`
-                  }
+                  <img src="../../../${app.location}/${app.icon}" alt="${
+                  app.name
+                }" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${app.name.charAt(
+                  0
+                )}</span>'">
                 </div>
                 <div class="app-name">${app.name}</div>
-              </a>
-            `
+              </a>`
               )
               .join("")}
           </div>

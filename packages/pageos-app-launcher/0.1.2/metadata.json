@@ -1,7 +1,7 @@
 {
   "name": "PageOS 应用启动器",
   "id": "pageos-app-launcher",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "PageOS 应用启动器",
   "icon": "assets/icon.svg",
   "author": "PJ568",
@@ -10,9 +10,9 @@
   "permissions": [],
   "entry": "index.html",
   "all_files": {
+    "lib/pinyinjs/pinyinUtil.js": "8b71ceebda777d1cc7b1afdcc9096f59676ce0fbe151d21db06f35d7e2ad7986",
     "assets/icon.svg": "4a60a778bbbcc370e9f593d2260d3bac003750f5ba73d9a33f2b31303687f7b5",
-    "lib/pinyinjs/pinyin_dict_withtone.js": "e822cf20885ae7d6adcb35a3cbd94c3372e8dc6dbf04b1407f240c8c8da7d437",
-    "index.html": "b453fbb4c9460d9ca687bd24404128ae48f09a1d80a06e7558f50fe3f6f8e96f",
-    "lib/pinyinjs/pinyinUtil.js": "8b71ceebda777d1cc7b1afdcc9096f59676ce0fbe151d21db06f35d7e2ad7986"
+    "index.html": "21fcfdf233a302cffe9bf9bdbc638e09631fd5333e17cc70d604d7105ce1277d",
+    "lib/pinyinjs/pinyin_dict_withtone.js": "e822cf20885ae7d6adcb35a3cbd94c3372e8dc6dbf04b1407f240c8c8da7d437"
   }
 }
