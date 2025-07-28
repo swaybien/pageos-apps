@@ -169,7 +169,7 @@
       // 从index.json加载应用数据
       async function loadApps() {
         try {
-          const response = await fetch("/index.json");
+          const response = await fetch("../../../index.json");
           const data = await response.json();
 
           // 转换数据格式并添加拼音
