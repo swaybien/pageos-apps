@@ -17,6 +17,15 @@
       "latest_version": "0.1.4",
       "description": "PageOS 应用启动器",
       "location": "./packages/pageos-app-launcher/0.1.4"
+    },
+    {
+      "id": "pageos-ui",
+      "name": "PageOS 用户桌面",
+      "icon": "assets/favicon.svg",
+      "author": "PJ568",
+      "latest_version": "0.1.0",
+      "description": "PageOS 的 HTML/CSS/JavaScript 用户界面实现",
+      "location": "./packages/pageos-ui/0.1.0"
     }
   ],
   "source": []
