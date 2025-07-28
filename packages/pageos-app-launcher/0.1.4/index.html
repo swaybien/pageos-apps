@@ -143,11 +143,7 @@
         color: var(--danger-color);
       }
     </style>
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="assets/icon.svg"
-    />
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
   </head>
   <body>
     <div class="container">
@@ -193,6 +189,11 @@
         const groups = {};
 
         apps.forEach((app) => {
+          // 排除本身
+          if (app.id === "pageos-app-launcher") {
+            return;
+          }
+
           // 获取拼音首字母，如果拼音不存在则使用名称首字母
           var initial = app.pinyin
             ? app.pinyin.charAt(0).toUpperCase()
