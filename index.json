@@ -8,6 +8,15 @@
       "latest_version": "0.1.1",
       "description": "A PageOS web application",
       "location": "./packages/pageos-hello/0.1.1"
+    },
+    {
+      "id": "pageos-app-launcher",
+      "name": "PageOS 应用启动器",
+      "icon": "assets/icon.svg",
+      "author": "PJ568",
+      "latest_version": "0.1.0",
+      "description": "PageOS 应用启动器",
+      "location": "./packages/pageos-app-launcher/0.1.0"
     }
   ],
   "source": []
