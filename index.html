@@ -189,7 +189,7 @@
               let iconContent = "";
               if (pkg.icon) {
                 // 如果有图标URL，使用img标签
-                iconContent = `<img src="${pkg.icon}" alt="${pkg.name}" style="width:100%;height:100%;object-fit:contain;">`;
+                iconContent = `<img src="${pkg.location}/${pkg.icon}" alt="${pkg.name}" style="width:100%;height:100%;object-fit:contain;">`;
               } else {
                 // 如果没有图标，显示名称首字符
                 iconContent = pkg.name.charAt(0).toUpperCase();
