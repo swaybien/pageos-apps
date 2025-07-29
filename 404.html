@@ -123,7 +123,7 @@
         // 加载已安装的应用包列表
         async function loadPackages() {
           try {
-            const response = await fetch("index.json");
+            const response = await fetch("/index.json");
             const data = await response.json();
             return data.packages || [];
           } catch (error) {
