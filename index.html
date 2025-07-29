@@ -248,6 +248,7 @@
         function renderApps(appList) {
           if (appList.length === 0) {
             appsGrid.innerHTML = '<div class="loading">未找到匹配的应用</div>';
+            translate.execute([appsGrid]);
             return;
           }
 
@@ -602,7 +603,7 @@
             link.onerror = null;
             link.onload = null;
             document.head.removeChild(link);
-            reject(new Error(`无法加载CSS文件: ${url}`));
+            reject(new Error(`无法加载 CSS 文件: ${url}`));
           };
 
           //// 添加到文档头部
