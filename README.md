@@ -62,7 +62,7 @@ source = []
 
 ```json
 {
-  "name": "pageos-hello",
+  "name": "PageOS Hello",
   "id": "pageos-hello",
   "version": "0.1.0",
   "description": "A PageOS web application",
