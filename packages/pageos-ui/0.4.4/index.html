@@ -336,6 +336,7 @@
           min-width: var(--task-bar-height);
           display: flex;
           overflow: hidden;
+          overflow-x: scroll;
 
           & > * {
             cursor: pointer;
@@ -1667,17 +1668,10 @@
 
         // 自定义右键菜单功能
         function initOptionMenu(doc) {
-          // 移动到中心
-          function center(contextMenu) {
-            // 隐藏菜单后，将菜单移动到屏幕中心
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            const menuWidth = contextMenu.offsetWidth;
-            const menuHeight = contextMenu.offsetHeight;
-            const centerX = (windowWidth - menuWidth) / 2;
-            const centerY = (windowHeight - menuHeight) / 2;
-            contextMenu.style.left = centerX + "px";
-            contextMenu.style.top = centerY + "px";
+          // 隐藏菜单后，将菜单移动到屏幕内
+          function inScreen(contextMenu) {
+            contextMenu.style.left = "2px";
+            contextMenu.style.top = "2px";
           }
 
           // 初始化样式
@@ -1797,7 +1791,7 @@
                     doc.execCommand("selectAll");
                   }
                   contextMenu.classList.remove("show");
-                  center(contextMenu);
+                  inScreen(contextMenu);
                 };
                 contextMenu.appendChild(li);
               });
@@ -1855,7 +1849,7 @@
                     }
                     // 隐藏菜单
                     contextMenu.classList.remove("show");
-                    center(contextMenu);
+                    inScreen(contextMenu);
                   };
                   contextMenu.appendChild(li);
                 });
@@ -1890,14 +1884,14 @@
             } else {
               // 如果没有定义菜单选项，则隐藏菜单
               contextMenu.classList.remove("show");
-              center(contextMenu);
+              inScreen(contextMenu);
             }
           });
 
           // 点击其他地方隐藏菜单
           doc.addEventListener("click", function () {
             contextMenu.classList.remove("show");
-            center(contextMenu);
+            inScreen(contextMenu);
           });
 
           // 阻止菜单内部的点击事件冒泡
@@ -1920,6 +1914,16 @@
             } else if (action === "close") {
               wManager.closeWindow(windowId);
             }
+          });
+
+          // 当视口大小改变（如浏览器窗口大小改变）时执行
+          window.addEventListener("resize", function () {
+            // 等待后居中 contextMenu
+            setTimeout(() => {
+              if (contextMenu.style.display === "none") {
+                inScreen(contextMenu);
+              }
+            }, 500);
           });
         }
 
@@ -2123,98 +2127,125 @@
             document
               .querySelector("taskbar-container bar-space .app-launcher")
               .addEventListener("click", async () => {
-                const launcherPath = "../../../packages/pageos-app-launcher/";
-                const response = await fetch(launcherPath + "versions.txt");
-                const versions = await response.text();
-                const version = versions.split("\n").pop();
-                const iframe = document.createElement("iframe");
-                iframe.style.cssText =
-                  "width: 100%; height: 100%; border: none;";
-                iframe.src = `${launcherPath + version}/index.html`;
+                try {
+                  const launcherPath = "../../../packages/pageos-app-launcher/";
+                  const response = await fetch(launcherPath + "versions.txt");
+                  const versions = await response.text();
+                  const version = versions.split("\n").pop();
+                  const iframe = document.createElement("iframe");
+                  iframe.style.cssText =
+                    "width: 100%; height: 100%; border: none;";
+                  iframe.src = `${launcherPath + version}/index.html`;
 
-                // 监听菜单 iframe 加载完成事件
-                iframe.addEventListener("load", function () {
-                  // 获取 iframe 内部文档对象
-                  const iframeDoc =
-                    iframe.contentDocument || iframe.contentWindow.document;
+                  // 监听菜单 iframe 加载完成事件
+                  iframe.addEventListener("load", function () {
+                    // 获取 iframe 内部文档对象
+                    const iframeDoc =
+                      iframe.contentDocument || iframe.contentWindow.document;
 
-                  // 初始化右键菜单
-                  // initOptionMenu(iframeDoc);
+                    // 初始化右键菜单
+                    // initOptionMenu(iframeDoc);
 
-                  // 在 iframe 内部文档上绑定点击事件
-                  iframeDoc.addEventListener("click", async function (event) {
-                    const anchor = event.target.closest('a[data-pageos="app"]');
-                    if (
-                      anchor &&
-                      anchor.href &&
-                      anchor.href.endsWith("metadata.json")
-                    ) {
-                      try {
-                        event.preventDefault();
-                        const response = await fetch(anchor.href);
-                        const metadata = await response.json();
-                        const newIframe = document.createElement("iframe");
-                        newIframe.style.cssText =
-                          "width: 100%; height: 100%; border: none;";
-                        newIframe.src = new URL(
-                          metadata.entry,
-                          anchor.href
-                        ).href;
-                        application(metadata.id, [
-                          {
-                            icon: metadata.icon
-                              ? `<img src="${
-                                  new URL(metadata.icon, anchor.href).href
-                                }" />`
-                              : metadata.id[0],
-                            title: metadata.name,
-                            width: window.innerWidth * 0.6,
-                            height: window.innerHeight * 0.6,
-                            x: window.innerWidth * 0.2,
-                            y: window.innerHeight * 0.2,
-                            tabs: [
-                              {
-                                css: { padding: 0 },
-                                title: metadata.name,
-                                content: newIframe,
-                              },
-                            ],
-                          },
-                        ]);
-                      } catch (error) {
-                        console.error("加载 metadata.json 失败:", error);
+                    // 在 iframe 内部文档上绑定点击事件
+                    iframeDoc.addEventListener("click", async function (event) {
+                      const anchor = event.target.closest(
+                        'a[data-pageos="app"]'
+                      );
+                      if (
+                        anchor &&
+                        anchor.href &&
+                        anchor.href.endsWith("metadata.json")
+                      ) {
+                        try {
+                          event.preventDefault();
+                          const response = await fetch(anchor.href);
+                          const metadata = await response.json();
+                          const newIframe = document.createElement("iframe");
+                          newIframe.style.cssText =
+                            "width: 100%; height: 100%; border: none;";
+                          newIframe.src = new URL(
+                            metadata.entry,
+                            anchor.href
+                          ).href;
+                          application(metadata.id, [
+                            {
+                              icon: metadata.icon
+                                ? `<img src="${
+                                    new URL(metadata.icon, anchor.href).href
+                                  }" />`
+                                : metadata.id[0],
+                              title: metadata.name,
+                              width: window.innerWidth * 0.6,
+                              height: window.innerHeight * 0.6,
+                              x: window.innerWidth * 0.2,
+                              y: window.innerHeight * 0.2,
+                              tabs: [
+                                {
+                                  css: { padding: 0 },
+                                  title: metadata.name,
+                                  content: newIframe,
+                                },
+                              ],
+                            },
+                          ]);
+                        } catch (error) {
+                          console.error("加载 metadata.json 失败:", error);
+                        }
                       }
-                    }
+                    });
                   });
-                });
 
-                application("pageos-app-launcher", [
-                  {
-                    icon: `<img src="${
-                      launcherPath + version
-                    }/assets/icon.svg" />`,
-                    title: "PageOS 应用启动器",
-                    width:
-                      window.innerWidth * 0.9 > 1024
-                        ? 1024
-                        : window.innerWidth * 0.9,
-                    height: window.innerHeight * 0.6,
-                    x:
-                      (window.innerWidth -
-                        (window.innerWidth * 0.9 > 1024
+                  application("pageos-app-launcher", [
+                    {
+                      icon: `<img src="${
+                        launcherPath + version
+                      }/assets/icon.svg" />`,
+                      title: "应用程序启动器",
+                      width:
+                        window.innerWidth * 0.9 > 1024
                           ? 1024
-                          : window.innerWidth * 0.9)) *
-                      0.5,
-                    y: window.innerHeight * 0.25,
-                    tabs: [
-                      {
-                        css: { padding: 0 },
-                        title: "PageOS 应用启动器",
-                        content: iframe,
-                      },
-                    ],
-                  },
-                ]);
+                          : window.innerWidth * 0.9,
+                      height: window.innerHeight * 0.6,
+                      x:
+                        (window.innerWidth -
+                          (window.innerWidth * 0.9 > 1024
+                            ? 1024
+                            : window.innerWidth * 0.9)) *
+                        0.5,
+                      y: window.innerHeight * 0.25,
+                      tabs: [
+                        {
+                          css: { padding: 0 },
+                          title: "应用程序启动器",
+                          content: iframe,
+                        },
+                      ],
+                    },
+                  ]);
+                } catch (e) {
+                  d = document.createElement("div");
+                  p0 = document.createElement("p");
+                  p0.innerText = "启动程序启动器时出错：";
+                  p1 = document.createElement("p");
+                  p1.classList.add("error");
+                  p1.innerText = e;
+                  p2 = document.createElement("p");
+                  p2.innerText = "建议检查当前页面是否在 PageOS 环境下运行。";
+                  d.appendChild(p0);
+                  d.appendChild(p1);
+                  d.appendChild(p2);
+                  application("error", [
+                    {
+                      title: "启动失败",
+                      tabs: [
+                        {
+                          title: "提示",
+                          content: d,
+                        },
+                      ],
+                    },
+                  ]);
+                }
               });
           })();
         })();
