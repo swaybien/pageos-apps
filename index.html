@@ -17,6 +17,7 @@
         box-sizing: border-box;
         text-decoration: none;
         color: var(--secondary-font-color);
+        transition: all 0.2s ease;
       }
       ::selection {
         background: var(--accent-bg-color);
@@ -58,7 +59,6 @@
         border-bottom: var(--border-thickness) solid var(--secondary-color);
       }
       .search-box {
-        transition: all 0.2s ease;
         flex: 1;
         padding: var(--margin-padding);
         border: var(--border-thickness) solid var(--secondary-color);
@@ -98,10 +98,6 @@
           pointer-events: none;
         }
       }
-      a,
-      button {
-        transition: all 0.2s ease;
-      }
       a:hover,
       button:hover {
         border-color: var(--accent-color);
@@ -109,6 +105,7 @@
       .app-card:hover {
         border-color: var(--accent-color);
         transform: scale(1.1);
+        box-shadow: var(--shadow);
 
         .app-name {
           white-space: initial;
@@ -322,6 +319,19 @@
 
       // 自定义右键菜单功能
       function initOptionMenu(doc) {
+        // 移动到中心
+        function center(contextMenu) {
+          // 隐藏菜单后，将菜单移动到屏幕中心
+          const windowWidth = window.innerWidth;
+          const windowHeight = window.innerHeight;
+          const menuWidth = contextMenu.offsetWidth;
+          const menuHeight = contextMenu.offsetHeight;
+          const centerX = (windowWidth - menuWidth) / 2;
+          const centerY = (windowHeight - menuHeight) / 2;
+          contextMenu.style.left = centerX + "px";
+          contextMenu.style.top = centerY + "px";
+        }
+
         // 初始化样式
         var style = doc.createElement("style");
         style.type = "text/css";
@@ -440,6 +450,7 @@
                   doc.execCommand("selectAll");
                 }
                 contextMenu.classList.remove("show");
+                center(contextMenu);
               };
               contextMenu.appendChild(li);
             });
@@ -494,6 +505,7 @@
                   }
                   // 隐藏菜单
                   contextMenu.classList.remove("show");
+                  center(contextMenu);
                 };
                 contextMenu.appendChild(li);
               });
@@ -528,21 +540,14 @@
           } else {
             // 如果没有定义菜单选项，则隐藏菜单
             contextMenu.classList.remove("show");
+            center(contextMenu);
           }
         });
 
         // 点击其他地方隐藏菜单
         doc.addEventListener("click", function () {
           contextMenu.classList.remove("show");
-          // 隐藏菜单后，将菜单移动到屏幕中心
-          const windowWidth = window.innerWidth;
-          const windowHeight = window.innerHeight;
-          const menuWidth = contextMenu.offsetWidth;
-          const menuHeight = contextMenu.offsetHeight;
-          const centerX = (windowWidth - menuWidth) / 2;
-          const centerY = (windowHeight - menuHeight) / 2;
-          contextMenu.style.left = centerX + "px";
-          contextMenu.style.top = centerY + "px";
+          center(contextMenu);
         });
 
         // 阻止菜单内部的点击事件冒泡

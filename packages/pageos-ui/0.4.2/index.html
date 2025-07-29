@@ -457,7 +457,30 @@
               <path d="M12.5 3a17 17 0 0 1 0 18" />
             </svg>
           </button>
-          <button class="power" title="电源状态"></button>
+          <button class="power" title="电源状态">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-battery-vertical-eco"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M7 18v-11c0 -1.105 .895 -2 2 -2h.5c.276 0 .5 -.224 .5 -.5s.224 -.5 .5 -.5h3c.276 0 .5 .224 .5 .5s.224 .5 .5 .5h.5c1.105 0 2 .895 2 2v1m-8 12c-1.105 0 -2 -.895 -2 -2"
+              />
+              <path
+                d="M13 17.143c0 -2.84 2.09 -5.143 4.667 -5.143h2.333v.857c0 2.84 -2.09 5.143 -4.667 5.143h-2.333z"
+              />
+              <path d="M13 21v-3" />
+            </svg>
+          </button>
           <button class="date-time" title="日期时间">0/0/0 0:0</button>
         </status-space>
         <bar-space>
@@ -1023,10 +1046,10 @@
               minimized: false,
               icon: '<!-- Copyright (c) 2018-2025 Tabler --><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-app-window"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M6 8h.01" /><path d="M9 8h.01" /></svg>',
               title: "窗口",
-              width: 400,
-              height: 300,
-              x: 50,
-              y: 50,
+              width: window.innerWidth * 0.5,
+              height: window.innerHeight * 0.5,
+              x: window.innerWidth * 0.25,
+              y: window.innerHeight * 0.25,
               tabs: [
                 {
                   title: "标签页",
@@ -1591,8 +1614,65 @@
         // 初始化进程管理器
         const pManager = new ProcessManager();
 
+        // 应用程序：创建一个进程，该进程可创建多个窗口，当所有该进程的窗口都关闭时，进程自动退出
+        async function application(appProcessId, windowConfigs) {
+          await pManager.createProcess(appProcessId);
+
+          var count = 0;
+
+          // 跟踪窗口关闭状态
+          let windows = [];
+
+          windowConfigs.forEach((windowConfig) => {
+            // 创建窗口
+            const windowId = wManager.createWindow(appProcessId, windowConfig);
+
+            // 焦点
+            fManager.focusWindow(windowId);
+            wManager.focusWindow(windowId);
+
+            // 通过事件监听来监控窗口关闭
+            const windowObj = { windowId: windowId, closed: false };
+            windows[count] = windowObj;
+
+            // 监听窗口关闭事件
+            const closeHandler = () => {
+              windowObj.closed = true;
+              // 检查是否所有窗口都已关闭
+              const allClosed = windows.every((w) => w.closed);
+              if (allClosed) {
+                // 所有窗口都已关闭，终止进程
+                pManager.terminateProcess(appProcessId);
+              }
+            };
+
+            // 设置关闭处理器
+            const windowInstance = wManager.windows.get(windowId);
+            if (windowInstance) {
+              windowInstance.setCloseHandler(closeHandler);
+            } else {
+              console.warn(`未找到窗口实例: ${windowId}`);
+            }
+
+            count++;
+          });
+        }
+
         // 自定义右键菜单功能
         function initOptionMenu(doc) {
+          // 移动到中心
+          function center(contextMenu) {
+            // 隐藏菜单后，将菜单移动到屏幕中心
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+            const centerX = (windowWidth - menuWidth) / 2;
+            const centerY = (windowHeight - menuHeight) / 2;
+            contextMenu.style.left = centerX + "px";
+            contextMenu.style.top = centerY + "px";
+          }
+
           // 初始化样式
           var style = doc.createElement("style");
           style.type = "text/css";
@@ -1710,6 +1790,7 @@
                     doc.execCommand("selectAll");
                   }
                   contextMenu.classList.remove("show");
+                  center(contextMenu);
                 };
                 contextMenu.appendChild(li);
               });
@@ -1767,6 +1848,7 @@
                     }
                     // 隐藏菜单
                     contextMenu.classList.remove("show");
+                    center(contextMenu);
                   };
                   contextMenu.appendChild(li);
                 });
@@ -1801,12 +1883,14 @@
             } else {
               // 如果没有定义菜单选项，则隐藏菜单
               contextMenu.classList.remove("show");
+              center(contextMenu);
             }
           });
 
           // 点击其他地方隐藏菜单
           doc.addEventListener("click", function () {
             contextMenu.classList.remove("show");
+            center(contextMenu);
           });
 
           // 阻止菜单内部的点击事件冒泡
@@ -1898,10 +1982,12 @@
               const powerButton = taskBar.querySelector(".power");
 
               async function updateBatteryStatus() {
+                const battery_exclamation =
+                  '<!-- Copyright (c) 2018-2025 Tabler --><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-exclamation"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 17h8c1.105 0 2 -.895 2 -2v-.5c0 -.276 .224 -.5 .5 -.5s.5 -.224 .5 -.5v-3c0 -.276 -.224 -.5 -.5 -.5s-.5 -.224 -.5 -.5v-.5c0 -1.105 -.895 -2 -2 -2h-11c-1.105 0 -2 .895 -2 2v3" /><path d="M5 16v3" /><path d="M5 22v.01" /></svg>';
                 try {
                   if (!navigator.getBattery) {
                     powerButton.title = "电池状态不可用";
-                    powerButton.textContent = "󰂃"; // 感叹号图标
+                    powerButton.innerHTML = battery_exclamation; // 感叹号图标
                     console.warn("浏览器不支持电池状态 API");
                     return;
                   }
@@ -1909,11 +1995,12 @@
                   const battery = await navigator.getBattery();
                   const level = Math.floor(battery.level * 100);
                   let statusText = `电量: ${level}%`;
-                  let batteryIcon = "󰂃"; // 默认感叹号图标
+                  let batteryIcon = battery_exclamation; // 默认感叹号图标
 
                   // 充电状态使用充电图标
                   if (battery.charging) {
-                    batteryIcon = "󰂄";
+                    batteryIcon =
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-charging-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 9a2 2 0 0 1 2 -2h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-4.5" /><path d="M3 15h6v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2v-2z" /><path d="M6 22v-3" /><path d="M4 15v-2.5" /><path d="M8 15v-2.5" /></svg>';
                     statusText += " (充电中)";
                     if (battery.chargingTime < Infinity) {
                       statusText += ` | 充满时间: ${Math.floor(
@@ -1924,19 +2011,14 @@
                   // 非充电状态根据电量选择图标
                   else {
                     const icons = [
-                      "󰁺", // 10%
-                      "󰁻", // 20%
-                      "󰁼", // 30%
-                      "󰁽", // 40%
-                      "󰁾", // 50%
-                      "󰁿", // 60%
-                      "󰂀", // 70%
-                      "󰂁", // 80%
-                      "󰂂", // 90%
-                      "󰁹", // 100%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /></svg>', // 0%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /></svg>', // 25%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /><path d="M10 10l0 4" /></svg>', // 50%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /><path d="M10 10l0 4" /><path d="M13 10l0 4" /></svg>', // 75%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-4"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /><path d="M10 10l0 4" /><path d="M13 10l0 4" /><path d="M16 10l0 4" /></svg>', // 100%
                     ];
-                    const index = Math.min(Math.floor(level / 10), 9);
-                    batteryIcon = level <= 10 ? "󰂃" : icons[index];
+                    const index = Math.min(Math.floor(level / 25), 4); // 25: 状态之间的间隔、4: 状态的个数减一
+                    batteryIcon = level = icons[index];
 
                     if (battery.dischargingTime < Infinity) {
                       statusText += ` | 剩余时间: ${Math.floor(
@@ -1945,7 +2027,7 @@
                     }
                   }
 
-                  powerButton.textContent = batteryIcon;
+                  powerButton.innerHTML = batteryIcon;
                   powerButton.title = statusText;
                   powerButton.style.display = "block";
 
@@ -1964,7 +2046,7 @@
                     updateBatteryStatus
                   );
                 } catch (error) {
-                  powerButton.textContent = "󰂃";
+                  powerButton.innerHTML = battery_exclamation;
                   powerButton.title = "电池状态检测失败";
                   console.warn("获取电池状态失败:", error);
                 }
@@ -1994,38 +2076,34 @@
                     e.textContent = statusDetails;
 
                     // 创建电池状态窗口
-                    const batteryWinId = wManager.createWindow("taskBar", {
-                      title: "电池状态",
-                      width: 300,
-                      height: 200,
-                      x: window.screen.width / 2 - 150,
-                      y: window.screen.height / 2 - 100,
-                      tabs: [
-                        {
-                          title: "详细信息",
-                          content: e,
-                        },
-                      ],
-                    });
+                    application("power-manager", [
+                      {
+                        title: "电池状态",
+                        tabs: [
+                          {
+                            title: "详细信息",
+                            content: e,
+                          },
+                        ],
+                      },
+                    ]);
                   }
                 } catch (error) {
                   var e = document.createElement("p");
                   e.style.color = "var(--danger-color)";
                   e.textContent = "无法获取电池详细信息" + error;
                   // 创建错误提示窗口
-                  const errorWinId = wManager.createWindow("taskBar", {
-                    title: "错误",
-                    width: 250,
-                    height: 100,
-                    x: window.screen.width / 2 - 125,
-                    y: window.screen.height / 2 - 50,
-                    tabs: [
-                      {
-                        title: "提示",
-                        content: e,
-                      },
-                    ],
-                  });
+                  application("power-manager", [
+                    {
+                      title: "电池状态错误",
+                      tabs: [
+                        {
+                          title: "提示",
+                          content: e,
+                        },
+                      ],
+                    },
+                  ]);
                 }
               });
 
@@ -2035,53 +2113,6 @@
           })();
 
           (function apps() {
-            // 应用程序：创建一个进程，该进程可创建多个窗口，当所有该进程的窗口都关闭时，进程自动退出
-            async function application(appProcessId, windowConfigs) {
-              await pManager.createProcess(appProcessId);
-
-              var count = 0;
-
-              // 跟踪窗口关闭状态
-              let windows = [];
-
-              windowConfigs.forEach((windowConfig) => {
-                // 创建窗口
-                const windowId = wManager.createWindow(
-                  appProcessId,
-                  windowConfig
-                );
-
-                // 焦点
-                fManager.focusWindow(windowId);
-                wManager.focusWindow(windowId);
-
-                // 通过事件监听来监控窗口关闭
-                const windowObj = { windowId: windowId, closed: false };
-                windows[count] = windowObj;
-
-                // 监听窗口关闭事件
-                const closeHandler = () => {
-                  windowObj.closed = true;
-                  // 检查是否所有窗口都已关闭
-                  const allClosed = windows.every((w) => w.closed);
-                  if (allClosed) {
-                    // 所有窗口都已关闭，终止进程
-                    pManager.terminateProcess(appProcessId);
-                  }
-                };
-
-                // 设置关闭处理器
-                const windowInstance = wManager.windows.get(windowId);
-                if (windowInstance) {
-                  windowInstance.setCloseHandler(closeHandler);
-                } else {
-                  console.warn(`未找到窗口实例: ${windowId}`);
-                }
-
-                count++;
-              });
-            }
-
             document
               .querySelector("taskbar-container bar-space .app-launcher")
               .addEventListener("click", async () => {
@@ -2130,10 +2161,10 @@
                                 }" />`
                               : metadata.id[0],
                             title: metadata.name,
-                            width: window.screen.width * 0.6,
-                            height: window.screen.height * 0.6,
-                            x: window.screen.width * 0.2,
-                            y: window.screen.height * 0.2,
+                            width: window.innerWidth * 0.6,
+                            height: window.innerHeight * 0.6,
+                            x: window.innerWidth * 0.2,
+                            y: window.innerHeight * 0.2,
                             tabs: [
                               {
                                 css: { padding: 0 },
@@ -2157,17 +2188,17 @@
                     }/assets/icon.svg" />`,
                     title: "PageOS 应用启动器",
                     width:
-                      window.screen.width * 0.9 > 1024
+                      window.innerWidth * 0.9 > 1024
                         ? 1024
-                        : window.screen.width * 0.9,
-                    height: window.screen.height * 0.6,
+                        : window.innerWidth * 0.9,
+                    height: window.innerHeight * 0.6,
                     x:
-                      (window.screen.width -
-                        (window.screen.width * 0.9 > 1024
+                      (window.innerWidth -
+                        (window.innerWidth * 0.9 > 1024
                           ? 1024
-                          : window.screen.width * 0.9)) *
+                          : window.innerWidth * 0.9)) *
                       0.5,
-                    y: window.screen.height * 0.25,
+                    y: window.innerHeight * 0.25,
                     tabs: [
                       {
                         css: { padding: 0 },
