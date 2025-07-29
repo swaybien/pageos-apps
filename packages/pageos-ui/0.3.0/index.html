@@ -242,6 +242,7 @@
         .tab-content {
           flex: 1;
           display: none;
+          padding: var(--margin-padding);
 
           &.active {
             display: flex;
@@ -327,8 +328,10 @@
           border-left: var(--border-thickness) solid var(--secondary-color);
           min-width: var(--task-bar-height);
           display: flex;
+          overflow: hidden;
 
           & > * {
+            cursor: pointer;
             padding: var(--margin-padding);
             height: 100%;
             min-width: var(--task-bar-height);
@@ -347,6 +350,7 @@
         & > * {
           border-top: var(--border-thickness) solid transparent;
           border-bottom: var(--border-thickness) solid transparent;
+          font-size: large;
 
           & > * {
             pointer-events: none;
@@ -369,12 +373,39 @@
       .power {
         display: none;
       }
+
+      #translate {
+        position: relative;
+
+        .translateSelectLanguage {
+          background-color: var(--content-bg-color);
+          color: inherit;
+          opacity: 0;
+          cursor: pointer;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+
+          & > * {
+            border: var(--border-thickness) solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--content-bg-color);
+            color: inherit;
+          }
+        }
+      }
     </style>
     <link
       rel="icon"
       type="image/svg+xml"
       href="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8IS0tIOWkluahhuefqeW9oiAtLT4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSIxMCIgcnk9IjEwIgogICAgZmlsbD0iIzQyNDI0MiIKICAgIHN0cm9rZT0iIzAwNjk1YyIKICAgIHN0cm9rZS13aWR0aD0iNCIvPgoKICA8IS0tIOW3puecvO+8muWwj+WchueCuSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE0IiByPSIxLjUiIGZpbGw9IiNmNWY1ZjUiIC8+CgogIDwhLS0g5Y+z55y877ya5bCP5ZyG54K5IC0tPgogIDxjaXJjbGUgY3g9IjIwIiBjeT0iMTQiIHI9IjEuNSIgZmlsbD0iI2Y1ZjVmNSIgLz4KCiAgPCEtLSDpvLvlrZDvvJrnq5bnur8gLS0+CiAgPGxpbmUgeDE9IjE2IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE4IiBzdHJva2U9IiNmNWY1ZjUiIHN0cm9rZS13aWR0aD0iMS41IiAvPgoKICA8IS0tIOW+rueskeeahOWYtO+8muS4iuaJrOeahOW8p+e6vyAtLT4KICA8cGF0aCBkPSJNIDE0IDIwIFEgMTYgMjIgMTggMjAiIAogICAgICAgIGZpbGw9Im5vbmUiIAogICAgICAgIHN0cm9rZT0iI2Y1ZjVmNSIgCiAgICAgICAgc3Ryb2tlLXdpZHRoPSIxLjUiIAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KPC9zdmc+"
     />
+    <script
+      src="https://lib.baomitu.com/translate.js/3.17.0/translate.js"
+      type="text/javascript"
+    ></script>
   </head>
   <body>
     <bg></bg>
@@ -383,15 +414,75 @@
       <task-bar>
         <bar-space>
           <button class="app-launcher" title="应用程序启动器"></button>
-          <button class="search" title="全局搜索"></button>
+          <button class="search" title="全局搜索">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-search"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+              <path d="M21 21l-6 -6" /></svg
+          ></button>
         </bar-space>
         <window-buttons></window-buttons>
         <status-space>
+          <button id="translate" class="language-tools" title="语言工具">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-world"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+              <path d="M3.6 9h16.8" />
+              <path d="M3.6 15h16.8" />
+              <path d="M11.5 3a17 17 0 0 0 0 18" />
+              <path d="M12.5 3a17 17 0 0 1 0 18" />
+            </svg>
+          </button>
           <button class="power" title="电源状态"></button>
           <button class="date-time" title="日期时间">0/0/0 0:0</button>
         </status-space>
         <bar-space>
-          <button class="exit" title="退出">󰍃</button>
+          <button class="exit" title="退出">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-logout"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"
+              />
+              <path d="M9 12h12l-3 -3" />
+              <path d="M18 15l3 -3" />
+            </svg>
+          </button>
         </bar-space>
       </task-bar>
     </taskbar-container>
@@ -504,7 +595,7 @@
               link.onerror = null;
               link.onload = null;
               document.head.removeChild(link);
-              reject(new Error(`无法加载CSS文件: ${url}`));
+              reject(new Error(`无法加载 CSS 文件: ${url}`));
             };
 
             //// 添加到文档头部
@@ -512,8 +603,42 @@
           });
         }
 
+        // translate-js 翻译系统
+        //// 初始化翻译系统
+        function initTranslate() {
+          try {
+            translate.service.use("client.edge");
+            translate.request.listener.start();
+            translate.setAutoDiscriminateLocalLanguage();
+            translate.language.setUrlParamControl();
+            translate.ignore.class.push("notTranslate");
+            translate.execute();
+          } catch (e) {
+            console.error("翻译系统出错：" + e);
+          }
+        }
+
+        //// 刷新翻译
+        function refreshTranslate() {
+          try {
+            translate.selectLanguageTag.refreshRender();
+          } catch (e) {
+            console.error("刷新翻译出错：" + e);
+          }
+        }
+
+        //// 翻译元素 [element, ……]
+        function translateElement(elements) {
+          try {
+            translate.execute(elements);
+          } catch (e) {
+            console.error("翻译元素出错：" + e);
+          }
+        }
+
         // 初始化
         function initialize() {
+          initTranslate(); //// 翻译系统
           loadCSS(
             "https://chinese-fonts-cdn.deno.dev/packages/maple-mono-cn/dist/MapleMono-CN-Regular/result.css"
           ); //// 加载字体 CSS
@@ -522,6 +647,7 @@
         // 触发器
         //// 网页加载完毕后触发初始化
         window.addEventListener("DOMContentLoaded", () => initialize());
+
         // 统一焦点管理器（合并输入管理和焦点管理）
         class FocusManager {
           constructor() {
@@ -767,6 +893,7 @@
           createWindow(processId, config = {}) {
             const windowId = `window-${this.windowIdCounter++}`; // 使用递增ID
             const win = new PageWin(windowId, processId, config);
+            translateElement([win.element]);
             this.windows.set(windowId, win);
             this.windowsContainer.appendChild(win.element);
 
@@ -780,7 +907,7 @@
             const windowBtn = document.createElement("button");
             windowBtn.innerHTML = win.config.icon
               ? win.config.icon
-              : win.config.title[0];
+              : win.config.title.charAt(0).toUpperCase();
             windowBtn.title = win.config.title;
             windowBtn.dataset.windowId = windowId;
             windowBtn.addEventListener("click", () => {
@@ -796,6 +923,7 @@
               { label: "关闭", action: "close" },
             ];
             windowBtn.dataset.menuOptions = JSON.stringify(menuOptions);
+            translateElement([windowBtn]);
             taskbar.appendChild(windowBtn);
 
             return windowId;
@@ -893,7 +1021,7 @@
               borderless: false,
               fullscreen: false,
               minimized: false,
-              icon: "",
+              icon: '<!-- Copyright (c) 2018-2025 Tabler --><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-app-window"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M6 8h.01" /><path d="M9 8h.01" /></svg>',
               title: "窗口",
               width: 400,
               height: 300,
@@ -949,13 +1077,24 @@
             const titleBar = document.createElement("div");
             titleBar.className = "window-title-bar";
             titleBar.innerHTML = `<div class="window-icon">${
-              this.config.icon ? this.config.icon : this.config.title[0]
+              this.config.icon
+                ? this.config.icon
+                : this.config.title.charAt(0).toUpperCase()
             }</div>
 <div class="window-title">${this.config.title}</div>
 <div class="window-controls">
-  <button class="minimize"></button>
-  <button class="maximize"></button>
-  <button class="close"></button>
+  <button class="minimize">
+    <!-- Copyright (c) 2018-2025 Tabler -->
+    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-compact-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 11l8 3l8 -3" /></svg>
+  </button>
+  <button class="maximize">
+    <!-- Copyright (c) 2018-2025 Tabler -->
+    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-maximize"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 8v-2a2 2 0 0 1 2 -2h2" /><path d="M4 16v2a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M16 20h2a2 2 0 0 0 2 -2v-2" /></svg>
+  </button>
+  <button class="close">
+    <!-- Copyright (c) 2018-2025 Tabler -->
+    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
+  </button>
 </div>`;
 
             // 标签页栏
@@ -1060,14 +1199,14 @@
                 let newX = e.clientX - this.dragOffset.x;
                 let newY = e.clientY - this.dragOffset.y;
 
-                newX = Math.max(
-                  0,
-                  Math.min(newX, window.innerWidth - this.element.offsetWidth)
-                );
-                newY = Math.max(
-                  0,
-                  Math.min(newY, window.innerHeight - this.element.offsetHeight)
-                );
+                // newX = Math.max(
+                //   0,
+                //   Math.min(newX, window.innerWidth - this.element.offsetWidth)
+                // );
+                // newY = Math.max(
+                //   0,
+                //   Math.min(newY, window.innerHeight - this.element.offsetHeight)
+                // );
 
                 // 设置新的位置
                 this.element.style.left = newX + "px";
@@ -1120,14 +1259,14 @@
                 let newX = e.touches[0].clientX - this.dragOffset.x;
                 let newY = e.touches[0].clientY - this.dragOffset.y;
 
-                newX = Math.max(
-                  0,
-                  Math.min(newX, window.innerWidth - this.element.offsetWidth)
-                );
-                newY = Math.max(
-                  0,
-                  Math.min(newY, window.innerHeight - this.element.offsetHeight)
-                );
+                // newX = Math.max(
+                //   0,
+                //   Math.min(newX, window.innerWidth - this.element.offsetWidth)
+                // );
+                // newY = Math.max(
+                //   0,
+                //   Math.min(newY, window.innerHeight - this.element.offsetHeight)
+                // );
 
                 // 设置新的位置
                 this.element.style.left = newX + "px";
@@ -1576,6 +1715,7 @@
               });
 
               // 显示菜单（确保在屏幕内）
+              translateElement([contextMenu]);
               contextMenu.classList.add("show");
 
               // 获取菜单尺寸
@@ -1599,10 +1739,10 @@
               contextMenu.style.left = adjustedLeft + "px";
               contextMenu.style.top = adjustedTop + "px";
             }
-            // 否则检查元素的data-menu-options属性
+            // 否则检查元素的 data-menu-options 属性
             else if (target.dataset.menuOptions) {
               try {
-                // 解析JSON字符串
+                // 解析 JSON 字符串
                 const menuOptions = JSON.parse(target.dataset.menuOptions);
                 // 清空菜单
                 contextMenu.innerHTML = "";
@@ -1632,6 +1772,7 @@
                 });
 
                 // 显示菜单（确保在屏幕内）
+                translateElement([contextMenu]);
                 contextMenu.classList.add("show");
 
                 // 获取菜单尺寸
@@ -1993,6 +2134,7 @@
                             y: window.screen.height * 0.2,
                             tabs: [
                               {
+                                css: { padding: 0 },
                                 title: metadata.name,
                                 content: newIframe,
                               },
@@ -2024,6 +2166,7 @@
                     y: window.screen.height * 0.25,
                     tabs: [
                       {
+                        css: { padding: 0 },
                         title: "PageOS 应用启动器",
                         content: iframe,
                       },

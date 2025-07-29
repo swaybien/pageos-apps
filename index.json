@@ -23,9 +23,9 @@
       "name": "PageOS 用户桌面",
       "icon": "assets/favicon.svg",
       "author": "PJ568",
-      "latest_version": "0.2.0",
+      "latest_version": "0.3.0",
       "description": "PageOS 的 HTML/CSS/JavaScript 用户界面实现",
-      "location": "./packages/pageos-ui/0.2.0"
+      "location": "./packages/pageos-ui/0.3.0"
     }
   ],
   "source": []
