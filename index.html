@@ -534,6 +534,15 @@
         // 点击其他地方隐藏菜单
         doc.addEventListener("click", function () {
           contextMenu.classList.remove("show");
+          // 隐藏菜单后，将菜单移动到屏幕中心
+          const windowWidth = window.innerWidth;
+          const windowHeight = window.innerHeight;
+          const menuWidth = contextMenu.offsetWidth;
+          const menuHeight = contextMenu.offsetHeight;
+          const centerX = (windowWidth - menuWidth) / 2;
+          const centerY = (windowHeight - menuHeight) / 2;
+          contextMenu.style.left = centerX + "px";
+          contextMenu.style.top = centerY + "px";
         });
 
         // 阻止菜单内部的点击事件冒泡
