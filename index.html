@@ -293,7 +293,9 @@
             (pkg) =>
               pkg.name.toLowerCase().includes(query) ||
               pkg.author.toLowerCase().includes(query) ||
-              (pkg.description && pkg.description.toLowerCase().includes(query))
+              (pkg.description &&
+                pkg.description.toLowerCase().includes(query)) ||
+              pkg.id.toLowerCase().includes(query)
           );
           renderApps(filtered);
         });
