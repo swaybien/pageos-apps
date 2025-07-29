@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-Hans-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -98,10 +98,12 @@
           pointer-events: none;
         }
       }
-      a {
+      a,
+      button {
         transition: all 0.2s ease;
       }
-      a:hover {
+      a:hover,
+      button:hover {
         border-color: var(--accent-color);
       }
       .app-card:hover {
@@ -239,9 +241,9 @@
           try {
             const response = await fetch("index.json");
             const data = await response.json();
-            packages = (data.packages || []).map(pkg => ({
+            packages = (data.packages || []).map((pkg) => ({
               ...pkg,
-              pinyin: pinyinUtil.getPinyin(pkg.name, "", false) // 添加拼音字段
+              pinyin: pinyinUtil.getPinyin(pkg.name, "", false), // 添加拼音字段
             }));
             renderApps(packages);
           } catch (error) {
@@ -252,7 +254,8 @@
         // 渲染应用程序列表
         function renderApps(appList) {
           if (appList.length === 0) {
-            appsGrid.innerHTML = '<div class="loading">未找到匹配的应用程序</div>';
+            appsGrid.innerHTML =
+              '<div class="loading">未找到匹配的应用程序</div>';
             translate.execute([appsGrid]);
             return;
           }
@@ -263,15 +266,21 @@
               let iconContent = "";
               if (pkg.icon) {
                 // 如果有图标 URL，使用 img 标签
-                iconContent = `<img src="${pkg.location}/${pkg.icon}" alt="${pkg.name}" style="width:100%;height:100%;object-fit:contain;">`;
+                iconContent = `<img src="${pkg.location}/${pkg.icon}" alt="${
+                  pkg.name || pkg.id
+                }" style="width:100%;height:100%;object-fit:contain;">`;
               } else {
                 // 如果没有图标，显示名称首字符
                 iconContent = pkg.name.charAt(0).toUpperCase();
               }
 
               return `
-              <a href="${pkg.location}/metadata.json" class="app-card" title="${
-                pkg.description || ""
+              <button data-href="${
+                pkg.location
+              }/metadata.json" onclick="window.open('${
+                pkg.location
+              }/metadata.json', '_blank');" class="app-card" title="${
+                pkg.description || pkg.name || pkg.id
               }" target="_blank" data-menu-options='${JSON.stringify([
                 { label: "启动应用程序", action: "execute" }, // 新标签页打开 href 指向的 metadata.json 中的 entry 指向的文件
                 { label: "查看元信息 ", action: "metadata" }, // 新标签页打开 href 指向的 metadata.json
@@ -279,9 +288,9 @@
                 { label: "复制元文件地址", action: "cpmeta" }, // 复制 href 指向的 metadata.json 的地址
               ])}'>
                 <div class="app-icon">${iconContent}</div>
-                <div class="app-name">${pkg.name}</div>
+                <div class="app-name">${pkg.name || pkg.id}</div>
                 <div class="app-author">作者: ${pkg.author}</div>
-              </a>`;
+              </button>`;
             })
             .join("");
           translate.execute([appsGrid]);
@@ -536,7 +545,7 @@
       // 处理右键菜单动作
       document.addEventListener("custom-contextmenu-action", function (e) {
         const { action, target } = e.detail;
-        const metadataUrl = target.href;
+        const metadataUrl = target.dataset.href;
 
         // 获取 metadata.json 内容
         async function getMetadata() {
@@ -553,7 +562,10 @@
           // 启动应用程序：新标签页打开 metadata.json 中的 entry 指向的文件
           getMetadata().then((metadata) => {
             if (metadata && metadata.entry) {
-              const entryUrl = new URL(metadata.entry, metadataUrl).href;
+              const entryUrl = new URL(
+                metadata.entry,
+                new URL(metadataUrl, window.location.href).href
+              ).href;
               window.open(entryUrl, "_blank");
             }
           });
@@ -564,7 +576,10 @@
           // 复制启动地址：复制 metadata.json 中的 entry 指向的文件地址
           getMetadata().then((metadata) => {
             if (metadata && metadata.entry) {
-              const entryUrl = new URL(metadata.entry, metadataUrl).href;
+              const entryUrl = new URL(
+                metadata.entry,
+                new URL(metadataUrl, window.location.href).href
+              ).href;
               navigator.clipboard.writeText(entryUrl).catch((err) => {
                 console.error("复制失败:", err);
               });
