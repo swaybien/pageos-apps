@@ -1,0 +1,18 @@
+{
+  "name": "应用程序启动器",
+  "id": "pageos-app-launcher",
+  "version": "0.2.1",
+  "description": "PageOS 的默认应用程序启动器",
+  "icon": "assets/icon.svg",
+  "author": "PJ568",
+  "type": "software",
+  "category": "pageos",
+  "permissions": [],
+  "entry": "index.html",
+  "all_files": {
+    "lib/pinyinjs/pinyinUtil.js": "8b71ceebda777d1cc7b1afdcc9096f59676ce0fbe151d21db06f35d7e2ad7986",
+    "assets/icon.svg": "4a60a778bbbcc370e9f593d2260d3bac003750f5ba73d9a33f2b31303687f7b5",
+    "index.html": "65f93f5ff5447bce5962802e7963e4790e3d41c7276e3c9fb22f8a653ae320c9",
+    "lib/pinyinjs/pinyin_dict_withtone.js": "e822cf20885ae7d6adcb35a3cbd94c3372e8dc6dbf04b1407f240c8c8da7d437"
+  }
+}

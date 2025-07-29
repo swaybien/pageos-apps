@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PageOS 应用启动器</title>
+    <title>应用程序启动器</title>
     <style>
-      /* 全局样式 - 从pageos-ui继承 */
+      /* 全局样式 - 从 pageos-ui 继承 */
       * {
         color: var(--secondary-font-color);
         font-family: "Maple Mono CN", "Courier New", Courier, monospace;
@@ -290,7 +290,8 @@
             app.name.toLowerCase().includes(searchTerm) ||
             (app.pinyin && app.pinyin.includes(searchTerm)) ||
             app.id.toLowerCase().includes(searchTerm) ||
-            (app.description && app.description.toLowerCase().includes(searchTerm))
+            (app.description &&
+              app.description.toLowerCase().includes(searchTerm))
         );
 
         container.innerHTML = getGroupHTML("搜索结果", filteredApps);
