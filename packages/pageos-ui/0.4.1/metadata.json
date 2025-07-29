@@ -1,7 +1,7 @@
 {
   "name": "PageOS 用户桌面",
   "id": "pageos-ui",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "PageOS 的 HTML/CSS/JavaScript 用户界面实现",
   "icon": "assets/favicon.svg",
   "author": "PJ568",
@@ -11,7 +11,7 @@
   "entry": "index.html",
   "all_files": {
     "assets/favicon.svg": "a3f5e674fc1724fb34087432add370d6a25db5eb627258d2deb7b085f3233be0",
-    "index.html": "50708bc7e07579930164e9183c7fd681b7aa8777c6d6b1706499db4838653b84",
+    "index.html": "332931304491cef1773899e9e87a54c2f53b6cc70808569722287a53dd9b5f0c",
     "assets/pageos_文字壁纸.svg": "09e5691dadac4bad211502479a05a6a74b58278b2fd6be284fdf83c980b9fba5"
   }
 }
