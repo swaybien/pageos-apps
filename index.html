@@ -352,9 +352,7 @@
               return `
               <button data-href="${
                 pkg.location
-              }/metadata.json" onclick="window.open('${
-                pkg.location
-              }/metadata.json', '_blank');" class="app-card" title="${
+              }/metadata.json" class="app-card" title="${
                 pkg.description || pkg.name || pkg.id
               }" target="_blank" data-menu-options='${JSON.stringify([
                 { label: "启动应用程序", action: "execute" }, // 新标签页打开 href 指向的 metadata.json 中的 entry 指向的文件
@@ -378,7 +376,7 @@
           if (searchTimeout) {
             clearTimeout(searchTimeout);
           }
-          
+
           const query = searchInput.value.toLowerCase().trim();
           if (!query) {
             renderApps(packages);
@@ -486,8 +484,7 @@
         contextMenu.id = "custom-context-menu";
         doc.body.appendChild(contextMenu);
 
-        // 监听全局右键点击事件
-        doc.addEventListener("contextmenu", function (e) {
+        function f(e) {
           // 阻止默认右键菜单
           e.preventDefault();
 
@@ -622,12 +619,21 @@
             contextMenu.classList.remove("show");
             inScreen(contextMenu);
           }
+        }
+
+        // 监听全局右键点击事件
+        doc.addEventListener("contextmenu", function (e) {
+          f(e);
         });
 
-        // 点击其他地方隐藏菜单
-        doc.addEventListener("click", function () {
-          contextMenu.classList.remove("show");
-          inScreen(contextMenu);
+        // 监听全局左键点击事件，点击其他地方隐藏菜单
+        doc.addEventListener("click", function (e) {
+          if (e.target.closest("button.app-card")) {
+            f(e);
+          } else {
+            contextMenu.classList.remove("show");
+            inScreen(contextMenu);
+          }
         });
 
         // 阻止菜单内部的点击事件冒泡
