@@ -92,8 +92,14 @@
         gap: var(--margin-padding);
         background: var(--secondary-bg-color);
         padding: var(--margin-padding);
+        border-top: var(--border-thickness) solid var(--secondary-color);
         border-bottom: var(--border-thickness) solid var(--secondary-color);
-        box-shadow: 0rem -0.6rem 1.2rem rgba(0, 0, 0, 0.2);
+        &:hover {
+          border-top: var(--border-thickness) solid var(--accent-color);
+          border-bottom: var(--border-thickness) solid var(--accent-color);
+          box-shadow: 0rem -0.6rem 1.2rem rgba(0, 0, 0, 0.2),
+            0rem 0.6rem 1.2rem rgba(0, 0, 0, 0.2);
+        }
       }
       .search-box {
         flex: 1;
