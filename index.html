@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PageOS 应用仓库</title>
+    <title>PageOS 应用程序包仓库</title>
     <link
       rel="icon"
       type="image/svg+xml"
@@ -79,7 +79,7 @@
         background: var(--content-bg-color);
         position: relative;
       }
-      /* 应用网格样式 */
+      /* 应用程序网格样式 */
       .apps-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -125,7 +125,7 @@
         font-size: 2rem;
         font-weight: bold;
       }
-      /* 应用信息样式 */
+      /* 应用程序信息样式 */
       .app-name {
         font-weight: bold;
         margin-bottom: 0.25rem;
@@ -167,7 +167,7 @@
       <input
         type="text"
         class="search-box"
-        placeholder="搜索应用……"
+        placeholder="搜索应用程序……"
         id="searchInput"
       />
       <a id="translate" class="top-buttons language-selector" title="语言">
@@ -234,7 +234,7 @@
         const searchInput = document.getElementById("searchInput");
         let packages = [];
 
-        // 加载应用数据
+        // 加载应用程序数据
         async function loadPackages() {
           try {
             const response = await fetch("index.json");
@@ -249,10 +249,10 @@
           }
         }
 
-        // 渲染应用列表
+        // 渲染应用程序列表
         function renderApps(appList) {
           if (appList.length === 0) {
-            appsGrid.innerHTML = '<div class="loading">未找到匹配的应用</div>';
+            appsGrid.innerHTML = '<div class="loading">未找到匹配的应用程序</div>';
             translate.execute([appsGrid]);
             return;
           }
