@@ -371,24 +371,33 @@
           translate.execute([appsGrid]);
         }
 
-        // 搜索功能
+        // 搜索功能 - 已添加防抖
+        let searchTimeout = null;
         searchInput.addEventListener("input", () => {
+          // 清除之前的定时器
+          if (searchTimeout) {
+            clearTimeout(searchTimeout);
+          }
+          
           const query = searchInput.value.toLowerCase().trim();
           if (!query) {
             renderApps(packages);
             return;
           }
 
-          const filtered = packages.filter(
-            (pkg) =>
-              pkg.name.toLowerCase().includes(query) ||
-              (pkg.pinyin && pkg.pinyin.includes(query)) || // 支持拼音搜索
-              pkg.author.toLowerCase().includes(query) ||
-              (pkg.description &&
-                pkg.description.toLowerCase().includes(query)) ||
-              pkg.id.toLowerCase().includes(query)
-          );
-          renderApps(filtered);
+          // 设置新的定时器，延迟执行搜索
+          searchTimeout = setTimeout(() => {
+            const filtered = packages.filter(
+              (pkg) =>
+                pkg.name.toLowerCase().includes(query) ||
+                (pkg.pinyin && pkg.pinyin.includes(query)) || // 支持拼音搜索
+                pkg.author.toLowerCase().includes(query) ||
+                (pkg.description &&
+                  pkg.description.toLowerCase().includes(query)) ||
+                pkg.id.toLowerCase().includes(query)
+            );
+            renderApps(filtered);
+          }, 300); // 300ms 防抖延迟
         });
 
         // 初始化
