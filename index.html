@@ -50,6 +50,42 @@
         flex: 1;
         overflow-y: auto;
       }
+      .info-container {
+        max-height: 40%;
+        overflow: hidden;
+        overflow-y: scroll;
+        & > * {
+          background: var(--secondary-bg-color);
+          border: var(--border-thickness) solid var(--secondary-color);
+          border-radius: var(--border-radius);
+          padding: var(--margin-padding);
+          margin: var(--margin-padding);
+          box-shadow: var(--shadow);
+          &:hover {
+            --secondary-font-color: var(--accent-font-color);
+            --secondary-color: var(--accent-color);
+          }
+          a {
+            text-decoration: underline;
+          }
+          h2 {
+            color: var(--accent-color);
+            margin-bottom: var(--margin-padding);
+          }
+          h3 {
+            color: var(--accent-color);
+            margin-bottom: var(--margin-padding);
+            margin-top: var(--margin-padding);
+          }
+          p {
+            margin-bottom: var(--margin-padding);
+          }
+          ul {
+            margin-left: calc(2 * var(--margin-padding));
+            margin-bottom: var(--margin-padding);
+          }
+        }
+      }
       /* 搜索栏样式 */
       .search-container {
         display: flex;
@@ -162,6 +198,41 @@
     ></script>
   </head>
   <body>
+    <div class="info-container">
+      <div>
+        <h2> PageOS - 基于 Arch Linux 的 Web-Centric 操作系统 </h2>
+        <p>
+          <a href="https://github.com/swaybien/pageos" target="_blank">
+            PageOS
+          </a>
+          是一款革命性的 Linux 发行版，将整个操作系统体验转化为现代化的 Web
+          界面。通过创新的架构设计，<a
+            href="https://github.com/swaybien/pageos"
+            target="_blank"
+          >
+            PageOS
+          </a>
+          让用户通过浏览器即可完成所有系统操作，同时保持传统 Linux
+          应用的兼容性。
+        </p>
+        <h3>核心理念</h3>
+        <ul>
+          <li>
+            <strong>Web-Centric 架构</strong>：整个用户界面由
+            HTML/CSS/JavaScript 实现，运行在 Firefox kiosk 模式中
+          </li>
+          <li>
+            <strong>系统即服务</strong>：通过 Rust 编写的后台服务提供完整的系统
+            API
+          </li>
+          <li>
+            <strong>混合应用生态</strong>：同时支持 Web 应用和传统 Linux 应用
+          </li>
+          <li> <strong>轻量高效</strong>：基于 Arch Linux 和 Wayland 合成器</li>
+        </ul>
+        <i> 颠覆传统的操作系统体验 - 一切皆在浏览器中实现 </i>
+      </div>
+    </div>
     <div class="search-container">
       <input
         type="text"
