@@ -101,6 +101,7 @@
       }
 
       .app-item {
+        text-decoration: none;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -150,11 +151,15 @@
       <input
         type="text"
         class="search-box"
-        placeholder="搜索应用..."
+        placeholder="搜索应用……"
         oninput="filterApps()"
       />
 
-      <div id="apps-container"></div>
+      <div id="apps-container">
+        <div class="group">
+          <div class="group-title">加载中……</div>
+        </div>
+      </div>
     </div>
 
     <script src="lib/pinyinjs/pinyin_dict_withtone.js"></script>
@@ -217,6 +222,40 @@
         return groups;
       }
 
+      // 生成单个应用项的 HTML
+      function getAppItemHTML(app) {
+        const nameDisplay = app.name || app.id;
+        const firstChar = nameDisplay.charAt(0).toUpperCase();
+        return `
+          <a href="../../../${
+            app.location
+          }/metadata.json" class="app-item" data-id="${
+          app.id
+        }" data-pageos="app" title="${app.description || ""}">
+            <div class="app-icon">
+              <img src="../../../${app.location}/${
+          app.icon
+        }" alt="${nameDisplay}" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${firstChar}</span>'">
+            </div>
+            <div class="app-name">${nameDisplay}</div>
+          </a>`;
+      }
+
+      // 生成应用分组的 HTML
+      function getGroupHTML(title, appsArray) {
+        if (appsArray.length === 0) {
+          return '<div class="no-results">未找到匹配的应用</div>';
+        }
+
+        return `
+          <div class="group">
+            <div class="group-title">${title}</div>
+            <div class="apps-grid">
+              ${appsArray.map(getAppItemHTML).join("")}
+            </div>
+          </div>`;
+      }
+
       // 渲染应用分组
       function renderAppGroups() {
         const container = document.getElementById("apps-container");
@@ -228,34 +267,7 @@
         const sortedKeys = Object.keys(groups).sort();
 
         sortedKeys.forEach((key) => {
-          const groupHTML = `
-          <div class="group">
-            <div class="group-title">${key}</div>
-            <div class="apps-grid">
-              ${groups[key]
-                .map(
-                  (app) => `
-                <a href="../../../${
-                  app.location
-                }/metadata.json" class="app-item" data-id="${
-                    app.id
-                  }" data-pageos="app">
-                  <div class="app-icon">
-                    <img src="../../../${app.location}/${app.icon}" alt="${
-                    app.name
-                  }" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${app.name.charAt(
-                    0
-                  )}</span>'">
-                  </div>
-                  <div class="app-name">${app.name}</div>
-                </a>`
-                )
-                .join("")}
-            </div>
-          </div>
-        `;
-
-          container.innerHTML += groupHTML;
+          container.innerHTML += getGroupHTML(key, groups[key]);
         });
       }
 
@@ -276,43 +288,12 @@
         const filteredApps = apps.filter(
           (app) =>
             app.name.toLowerCase().includes(searchTerm) ||
-            (app.pinyin && app.pinyin.includes(searchTerm))
+            (app.pinyin && app.pinyin.includes(searchTerm)) ||
+            app.id.toLowerCase().includes(searchTerm) ||
+            (app.description && app.description.toLowerCase().includes(searchTerm))
         );
 
-        if (filteredApps.length === 0) {
-          container.innerHTML =
-            '<div class="no-results">未找到匹配的应用</div>';
-          return;
-        }
-
-        const groupHTML = `
-        <div class="group">
-          <div class="group-title">搜索结果</div>
-          <div class="apps-grid">
-            ${filteredApps
-              .map(
-                (app) => `
-              <a href="../../../${
-                app.location
-              }/metadata.json" class="app-item" data-id="${
-                  app.id
-                }" data-pageos="app">
-                <div class="app-icon">
-                  <img src="../../../${app.location}/${app.icon}" alt="${
-                  app.name
-                }" onerror="this.parentNode.innerHTML='<span class=\\'icon-fallback\\'>${app.name.charAt(
-                  0
-                )}</span>'">
-                </div>
-                <div class="app-name">${app.name}</div>
-              </a>`
-              )
-              .join("")}
-          </div>
-        </div>
-      `;
-
-        container.innerHTML = groupHTML;
+        container.innerHTML = getGroupHTML("搜索结果", filteredApps);
       }
 
       // 初始加载应用数据

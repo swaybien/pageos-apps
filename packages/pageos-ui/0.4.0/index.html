@@ -2084,13 +2084,15 @@
 
             document
               .querySelector("taskbar-container bar-space .app-launcher")
-              .addEventListener("click", () => {
-                const launcherPath =
-                  "../../../packages/pageos-app-launcher/0.1.4/";
+              .addEventListener("click", async () => {
+                const launcherPath = "../../../packages/pageos-app-launcher/";
+                const response = await fetch(launcherPath + "versions.txt");
+                const versions = await response.text();
+                const version = versions.split("\n").pop();
                 const iframe = document.createElement("iframe");
                 iframe.style.cssText =
                   "width: 100%; height: 100%; border: none;";
-                iframe.src = `${launcherPath}index.html`;
+                iframe.src = `${launcherPath + version}/index.html`;
 
                 // 监听菜单 iframe 加载完成事件
                 iframe.addEventListener("load", function () {
@@ -2150,7 +2152,9 @@
 
                 application("pageos-app-launcher", [
                   {
-                    icon: `<img src="${launcherPath}assets/icon.svg" />`,
+                    icon: `<img src="${
+                      launcherPath + version
+                    }assets/icon.svg" />`,
                     title: "PageOS 应用启动器",
                     width:
                       window.screen.width * 0.9 > 1024
