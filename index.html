@@ -354,9 +354,12 @@
                 pkg.location
               }/metadata.json" class="app-card" title="${
                 pkg.description || pkg.name || pkg.id
-              }" target="_blank" data-menu-options='${JSON.stringify([
+              }" target="_blank" data-meta-entry='${pkg.entry}' data-meta-id='${
+                pkg.id
+              }' data-menu-options='${JSON.stringify([
                 { label: "启动应用程序", action: "execute" }, // 新标签页打开 href 指向的 metadata.json 中的 entry 指向的文件
                 { label: "查看元信息 ", action: "metadata" }, // 新标签页打开 href 指向的 metadata.json
+                { label: "复制固定启动地址", action: "cpcmd" }, // 复制和本页面同目录的 exec.html?id=“软件包 ID”
                 { label: "复制启动地址", action: "cpexec" }, // 复制 href 指向的 metadata.json 中的 entry 指向的文件地址
                 { label: "复制元文件地址", action: "cpmeta" }, // 复制 href 指向的 metadata.json 的地址
               ])}'>
@@ -672,6 +675,12 @@
         } else if (action === "metadata") {
           // 查看元信息：新标签页打开 metadata.json
           window.open(metadataUrl, "_blank");
+        } else if (action === "cpcmd") {
+          // 复制固定启动地址：复制和本页面同目录的 exec.html?id=“软件包 ID”
+          const execUrl = new URL(`exec.html?id=${target.dataset.metaId}`, window.location.href).href;
+          navigator.clipboard.writeText(execUrl).catch((err) => {
+            console.error("复制失败:", err);
+          });
         } else if (action === "cpexec") {
           // 复制启动地址：复制 metadata.json 中的 entry 指向的文件地址
           getMetadata().then((metadata) => {
