@@ -658,15 +658,6 @@
           }
         }
 
-        //// 翻译元素 [element, ……]
-        function translateElement(elements) {
-          try {
-            translate.execute(elements);
-          } catch (e) {
-            console.error("翻译元素出错：" + e);
-          }
-        }
-
         // 初始化
         function initialize() {
           initTranslate(); //// 翻译系统
@@ -924,7 +915,7 @@
           createWindow(processId, config = {}) {
             const windowId = `window-${this.windowIdCounter++}`; // 使用递增ID
             const win = new PageWin(windowId, processId, config);
-            translateElement([win.element]);
+            translate.execute([win.element]);
             this.windows.set(windowId, win);
             this.windowsContainer.appendChild(win.element);
 
@@ -954,7 +945,7 @@
               { label: "关闭", action: "close" },
             ];
             windowBtn.dataset.menuOptions = JSON.stringify(menuOptions);
-            translateElement([windowBtn]);
+            translate.execute([windowBtn]);
             taskbar.appendChild(windowBtn);
 
             return windowId;
@@ -1797,7 +1788,7 @@
               });
 
               // 显示菜单（确保在屏幕内）
-              translateElement([contextMenu]);
+              translate.execute([contextMenu]);
               contextMenu.classList.add("show");
 
               // 获取菜单尺寸
@@ -1855,7 +1846,7 @@
                 });
 
                 // 显示菜单（确保在屏幕内）
-                translateElement([contextMenu]);
+                translate.execute([contextMenu]);
                 contextMenu.classList.add("show");
 
                 // 获取菜单尺寸
@@ -2146,6 +2137,8 @@
                     // 初始化右键菜单
                     // initOptionMenu(iframeDoc);
 
+                    // TODO: 翻译 iframe 内部文档元素
+
                     // 在 iframe 内部文档上绑定点击事件
                     iframeDoc.addEventListener("click", async function (event) {
                       const anchor = event.target.closest(
@@ -2167,6 +2160,12 @@
                             metadata.entry,
                             anchor.href
                           ).href;
+                          // newIframe.addEventListener("load", function () {
+                          //   // 获取 iframe 内部文档对象
+                          //   const newIframeDoc =
+                          //     newIframe.contentDocument ||
+                          //     newIframe.contentWindow.document;
+                          // });
                           application(metadata.id, [
                             {
                               icon: metadata.icon
