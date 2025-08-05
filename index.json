@@ -26,6 +26,24 @@
       "latest_version": "0.4.5",
       "description": "PageOS 的 HTML/CSS/JavaScript 用户界面实现",
       "location": "./packages/pageos-ui/0.4.5"
+    },
+    {
+      "id": "zxos-ui",
+      "name": "zx LeafOS",
+      "icon": "icon.svg",
+      "author": "zx34",
+      "latest_version": "1.0beta20",
+      "description": "一个多功能的 ScratchOS",
+      "location": "./packages/zxos-ui/1.0beta20"
+    },
+    {
+      "id": "bayoos-ui",
+      "name": "bayoOS Next",
+      "icon": "",
+      "author": "bayoOS 团队",
+      "latest_version": "1.3",
+      "description": "流畅、功能一并俱全的艺术品",
+      "location": "./packages/bayoos-ui/1.3"
     }
   ],
   "source": []

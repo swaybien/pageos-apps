@@ -1,0 +1,15 @@
+{
+  "name": "bayoOS Next",
+  "id": "bayoos-ui",
+  "version": "1.3",
+  "description": "流畅、功能一并俱全的艺术品",
+  "icon": "",
+  "author": "bayoOS 团队",
+  "type": "system",
+  "category": "bayoos",
+  "permissions": [],
+  "entry": "index.html",
+  "all_files": {
+    "index.html": "5d58eeadb9f4de898674b09a17839bad08711d29a05c55b8aec1ecde65caead9"
+  }
+}
