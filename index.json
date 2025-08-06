@@ -41,9 +41,9 @@
       "name": "bayoOS Next",
       "icon": "",
       "author": "bayoOS 团队",
-      "latest_version": "1.31",
+      "latest_version": "1.334",
       "description": "流畅、功能一并俱全的艺术品",
-      "location": "./packages/bayoos-ui/1.31"
+      "location": "./packages/bayoos-ui/1.334"
     }
   ],
   "source": []
