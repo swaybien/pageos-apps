@@ -1,7 +1,7 @@
 {
   "name": "天气查询",
   "id": "pageos-weather",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "通过 wttr.in 获取和解析天气数据并显示的网页应用",
   "icon": "favicon.svg",
   "author": "PJ568",
@@ -10,7 +10,7 @@
   "permissions": [],
   "entry": "index.html",
   "all_files": {
-    "index.html": "2d4e2b015cf8a317b521052d4d9d9d11335d872a59a183b8066f7cd9a0e5e28b",
+    "index.html": "86edb35b65c16706ab510a9da211c5eb225fd873fb6cae609340e938d37b9cd1",
     "favicon.svg": "1f6b367fa55c2d7bfead4755d39f7c2e40b78c24cb85702619630e3f288b7c6f"
   }
 }
