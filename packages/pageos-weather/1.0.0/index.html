@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天气查询</title>
+    <style>
+      /* 全局样式 - 从风格参考继承 */
+      * {
+        color: var(--secondary-font-color);
+        font-family: "Courier New", Courier, monospace;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+      }
+
+      ::selection {
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+      }
+
+      :root,
+      body {
+        height: 100%;
+        margin: 0;
+        background: var(--content-bg-color);
+        padding: var(--margin-padding);
+
+        --accent-color: #64ffda; /* 强调色：边框 */
+        --secondary-color: #00695c; /* 次要色：未激活边框 */
+        --accent-bg-color: #009688;
+        --secondary-bg-color: #616161;
+        --content-bg-color: #424242;
+        --accent-font-color: #f5f5f5;
+        --secondary-font-color: #eeeeee;
+
+        --margin-padding: 0.5rem;
+        --border-thickness: 0.2rem;
+        --border-radius: 0.5rem;
+        --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+      }
+
+      body {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-bottom: var(--margin-padding);
+      }
+
+      .search-box {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      input {
+        padding: 8px;
+        flex-grow: 1;
+        background: var(--secondary-bg-color);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--border-radius);
+        color: var(--secondary-font-color);
+        font-size: 1rem;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: var(--accent-color);
+      }
+
+      button {
+        padding: 8px 16px;
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .heng {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .weather-info {
+        background: var(--secondary-bg-color);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      #graph {
+        flex: 1;
+      }
+
+      .weather-terminal-info {
+        flex: 1;
+        min-height: 512px;
+        background: black;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+
+        iframe {
+          height: 100%;
+          width: 100%;
+          border: none;
+        }
+      }
+
+      .weather-detail {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .weather-detail:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      h1,
+      h2 {
+        color: var(--accent-color);
+        border-bottom: var(--border-thickness) solid var(--accent-color);
+        padding-bottom: 0.3rem;
+      }
+
+      /* 翻译按钮相关 */
+      #translate {
+        position: relative;
+      }
+
+      .translateSelectLanguage {
+        background: inherit;
+        color: inherit;
+        opacity: 0;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+    <script
+      src="https://lib.baomitu.com/translate.js/3.17.0/translate.js"
+      type="text/javascript"
+    ></script>
+    <script
+      src="https://lib.baomitu.com/Chart.js/3.7.1/chart.min.js"
+      type="application/javascript"
+    ></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>天气查询</h1>
+      <form id="searchForm" class="search-box">
+        <input type="text" id="cityInput" placeholder="输入城市名称" />
+        <button type="submit" title="获取天气">
+          <!-- Copyright (c) 2018-2025 Tabler -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-search"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+            <path d="M21 21l-6 -6" />
+          </svg>
+        </button>
+        <button
+          onclick="window.open('https://github.com/swaybien/pageos-weather', '_blank')"
+          title="仓库"
+        >
+          <!-- Copyright (c) 2018-2025 Tabler -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-brand-git"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M16 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12 8m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12 15v-6" />
+            <path d="M15 11l-2 -2" />
+            <path d="M11 7l-1.9 -1.9" />
+            <path
+              d="M13.446 2.6l7.955 7.954a2.045 2.045 0 0 1 0 2.892l-7.955 7.955a2.045 2.045 0 0 1 -2.892 0l-7.955 -7.955a2.045 2.045 0 0 1 0 -2.892l7.955 -7.955a2.045 2.045 0 0 1 2.892 0z"
+            />
+          </svg>
+        </button>
+        <button id="translate" title="语言">
+          <!-- Copyright (c) 2018-2025 Tabler -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-world"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+            <path d="M3.6 9h16.8" />
+            <path d="M3.6 15h16.8" />
+            <path d="M11.5 3a17 17 0 0 0 0 18" />
+            <path d="M12.5 3a17 17 0 0 1 0 18" />
+          </svg>
+        </button>
+        <button type="button" onclick="clearCache()" title="清除缓存">
+          <!-- Copyright (c) 2018-2025 Tabler -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-trash-x"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 7h16" />
+            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+            <path d="M10 12l4 4m0 -4l-4 4" />
+          </svg>
+        </button>
+      </form>
+      <div class="heng">
+        <div id="weatherResult" class="weather-info">
+          <p>正在获取当前位置天气……</p>
+        </div>
+        <div id="graph" class="weather-info">
+          <p>正在绘制当前位置天气趋势表……</p>
+        </div>
+      </div>
+      <div class="weather-terminal-info">
+        <iframe src="https://v2d.wttr.in" id="weatherRich"></iframe>
+      </div>
+    </div>
+
+    <script>
+      let dbPromise = null;
+
+      function openDB() {
+        if (!dbPromise) {
+          dbPromise = new Promise((resolve, reject) => {
+            const request = indexedDB.open("weatherCache", 1);
+            request.onupgradeneeded = function (event) {
+              const db = event.target.result;
+              if (!db.objectStoreNames.contains("cache")) {
+                db.createObjectStore("cache", { keyPath: "city" });
+              }
+            };
+            request.onsuccess = function (event) {
+              resolve(event.target.result);
+            };
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
+        }
+        return dbPromise;
+      }
+
+      function getCache(city) {
+        return openDB().then((db) => {
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction("cache", "readonly");
+            const store = transaction.objectStore("cache");
+            const request = store.get(city);
+            request.onsuccess = function (event) {
+              const data = event.target.result;
+              if (data) {
+                const now = Date.now();
+                // 缓存有效期1小时（3600000毫秒）
+                if (now - data.timestamp < 3600000) {
+                  resolve(data.data);
+                } else {
+                  reject(new Error("Cache expired"));
+                }
+              } else {
+                reject(new Error("Cache not found"));
+              }
+            };
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
+        });
+      }
+
+      function setCache(city, data) {
+        return openDB().then((db) => {
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction("cache", "readwrite");
+            const store = transaction.objectStore("cache");
+            const request = store.put({
+              city: city,
+              data: data,
+              timestamp: Date.now(),
+            });
+            request.onsuccess = resolve;
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
+        });
+      }
+
+      function clearCache() {
+        openDB()
+          .then((db) => {
+            return new Promise((resolve, reject) => {
+              const transaction = db.transaction("cache", "readwrite");
+              const store = transaction.objectStore("cache");
+              const request = store.clear();
+              request.onsuccess = resolve;
+              request.onerror = (event) => reject(event.target.error);
+            });
+          })
+          .then(() => {
+            alert("缓存已清除");
+          })
+          .catch((error) => {
+            console.error("清除缓存失败:", error);
+            alert("清除缓存失败");
+          });
+      }
+
+      function firstFetch() {
+        getCache("current_location")
+          .then((data) => {
+            updateGraph(data);
+            const current = data.current_condition[0];
+            const area = data.nearest_area[0];
+            updateWeatherUI(current, area);
+          })
+          .catch(() => {
+            fetch("https://wttr.in/?format=j1")
+              .then((response) => response.json())
+              .then((data) => {
+                setCache("current_location", data);
+                updateGraph(data);
+                const current = data.current_condition[0];
+                const area = data.nearest_area[0];
+                updateWeatherUI(current, area);
+              })
+              .catch((error) => {
+                const resultDiv = document.getElementById("weatherResult");
+                resultDiv.innerHTML = `
+                  <p>无法获取当前位置天气</p>
+                  <p>请输入城市名称手动查询</p>
+                `;
+              });
+          });
+      }
+
+      function updateWeatherUI(current, area) {
+        let html = `
+            <h2>${area.areaName[0].value}天气</h2>
+            <div class="weather-detail">
+              <strong>当前天气:</strong> ${current.weatherDesc[0].value}
+            </div>
+            <div class="weather-detail">
+              <strong>温度:</strong> ${current.temp_C}°C (体感 ${current.FeelsLikeC}°C)
+            </div>
+            <div class="weather-detail">
+              <strong>湿度:</strong> ${current.humidity}%
+            </div>
+            <div class="weather-detail">
+              <strong>风速:</strong> ${current.windspeedKmph} km/h (${current.winddir16Point})
+            </div>
+            <div class="weather-detail">
+              <strong>降水量:</strong> ${current.precipMM} mm
+            </div>
+            <div class="weather-detail">
+              <strong>能见度:</strong> ${current.visibility} km
+            </div>
+            <div class="weather-detail">
+              <strong>气压:</strong> ${current.pressure} hPa
+            </div>
+            <div class="weather-detail">
+              <strong>更新时间:</strong> ${current.observation_time}
+            </div>
+          `;
+        const res = document.getElementById("weatherResult");
+        res.innerHTML = html;
+        translate.execute([res]); // 翻译元素及内容
+        refreshTranslate();
+      }
+
+      function updateGraph(data) {
+        const graph = document.getElementById("graph");
+        try {
+          graph.innerHTML =
+            '<canvas id="weatherChart0"></canvas><canvas id="weatherChart1"></canvas>';
+          const ctx0 = document
+            .getElementById("weatherChart0")
+            .getContext("2d");
+          const ctx1 = document
+            .getElementById("weatherChart1")
+            .getContext("2d");
+
+          // 准备数据
+          const labels = [];
+          const datasets0 = [
+            {
+              label: "空气温度 (°C)",
+              data: [],
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+            },
+            {
+              label: "体感温度 (°C)",
+              data: [],
+              borderColor: "rgb(54, 162, 235)",
+              backgroundColor: "rgba(54, 162, 235, 0.5)",
+            },
+          ];
+          const datasets1 = [
+            {
+              label: "阳光率 (%)",
+              data: [],
+              borderColor: "rgb(255, 128, 128)",
+              backgroundColor: "rgba(255, 128, 128, 0.5)",
+            },
+            {
+              label: "下雨率 (%)",
+              data: [],
+              borderColor: "rgb(75, 192, 192)",
+              backgroundColor: "rgba(75, 192, 192, 0.5)",
+            },
+            {
+              label: "下雪率 (%)",
+              data: [],
+              borderColor: "rgb(153, 102, 255)",
+              backgroundColor: "rgba(153, 102, 255, 0.5)",
+            },
+            {
+              label: "打雷率 (%)",
+              data: [],
+              borderColor: "rgb(255, 159, 64)",
+              backgroundColor: "rgba(255, 159, 64, 0.5)",
+            },
+            {
+              label: "刮风率 (%)",
+              data: [],
+              borderColor: "rgb(123, 159, 321)",
+              backgroundColor: "rgba(123, 159, 321, 0.5)",
+            },
+            {
+              label: "雾水率 (%)",
+              data: [],
+              borderColor: "rgb(88, 192, 123)",
+              backgroundColor: "rgba(88, 192, 123, 0.5)",
+            },
+          ];
+
+          // 提取数据点
+          data.weather.forEach((day) => {
+            day.hourly.forEach((hourData) => {
+              const hourNum = parseInt(hourData.time);
+              const hours = Math.floor(hourNum / 100);
+              const minutes = hourNum % 100;
+              labels.push(
+                `${day.date.slice(5)} ${hours
+                  .toString()
+                  .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
+              );
+
+              datasets0[0].data.push(parseFloat(hourData.tempC));
+              datasets0[1].data.push(parseFloat(hourData.FeelsLikeC));
+              datasets1[0].data.push(parseFloat(hourData.chanceofsunshine));
+              datasets1[1].data.push(parseFloat(hourData.chanceofrain));
+              datasets1[2].data.push(parseFloat(hourData.chanceofsnow));
+              datasets1[3].data.push(parseFloat(hourData.chanceofthunder));
+              datasets1[4].data.push(parseFloat(hourData.chanceofwindy));
+              datasets1[5].data.push(parseFloat(hourData.chanceoffog));
+            });
+          });
+
+          // 创建图表
+          new Chart(ctx0, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: datasets0,
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "气温趋势",
+                  color: "#f5f5f5",
+                },
+                legend: {
+                  labels: {
+                    color: "#eeeeee",
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    color: "#eeeeee",
+                    maxRotation: 45,
+                    minRotation: 30,
+                  },
+                },
+                y: {
+                  ticks: {
+                    color: "#eeeeee",
+                  },
+                  title: {
+                    display: true,
+                    text: "数值",
+                    color: "#eeeeee",
+                  },
+                },
+              },
+            },
+          });
+          new Chart(ctx1, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: datasets1,
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "气象趋势",
+                  color: "#f5f5f5",
+                },
+                legend: {
+                  labels: {
+                    color: "#eeeeee",
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    color: "#eeeeee",
+                    maxRotation: 45,
+                    minRotation: 30,
+                  },
+                },
+                y: {
+                  ticks: {
+                    color: "#eeeeee",
+                  },
+                  title: {
+                    display: true,
+                    text: "数值",
+                    color: "#eeeeee",
+                  },
+                },
+              },
+            },
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function updateIframe(city) {
+        const iframe = document.getElementById("weatherRich");
+        iframe.src = `https://v2d.wttr.in/${city}`;
+      }
+
+      function getWeather() {
+        const city = document.getElementById("cityInput").value.trim();
+        updateIframe(city);
+
+        const resultDiv = document.getElementById("weatherResult");
+        const graph = document.getElementById("graph");
+
+        getCache(city)
+          .then((data) => {
+            updateGraph(data);
+            const current = data.current_condition[0];
+            const area = data.nearest_area[0];
+            updateWeatherUI(current, area);
+          })
+          .catch(() => {
+            resultDiv.innerHTML = "<p>加载中……</p>";
+            graph.innerHTML = "<p>加载中……</p>";
+
+            fetch(`https://wttr.in/${city}?format=j1`)
+              .then((response) => response.json())
+              .then((data) => {
+                setCache(city, data);
+                updateGraph(data);
+                const current = data.current_condition[0];
+                const area = data.nearest_area[0];
+                updateWeatherUI(current, area);
+              })
+              .catch((error) => {
+                resultDiv.innerHTML = `<p>获取天气信息失败: ${error.message}</p>`;
+                document.querySelector(
+                  "#graph tbody"
+                ).innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px;">数据加载失败</td></tr>`;
+              });
+          });
+      }
+
+      // translate-js 翻译系统
+      //// 初始化翻译系统
+      function initTranslate() {
+        try {
+          translate.service.use("client.edge");
+          translate.request.listener.start();
+          translate.setAutoDiscriminateLocalLanguage();
+          translate.language.setUrlParamControl();
+          translate.language.translateLocal = true;
+          translate.ignore.class.push("notTranslate");
+          translate.execute();
+        } catch (e) {
+          console.error("翻译系统出错：" + e);
+        }
+      }
+
+      //// 刷新翻译
+      function refreshTranslate() {
+        try {
+          translate.selectLanguageTag.refreshRender();
+        } catch (e) {
+          console.error("刷新翻译出错：" + e);
+        }
+      }
+
+      // 初始化
+      function initialize() {
+        initTranslate(); //// 初始化页面翻译
+        firstFetch();
+        // 添加表单提交事件监听
+        const form = document.getElementById("searchForm");
+        if (form) {
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            getWeather();
+          });
+        }
+      }
+
+      // 触发器
+      //// 网页加载完毕后触发初始化
+      window.addEventListener("DOMContentLoaded", () => initialize());
+    </script>
+  </body>
+</html>
