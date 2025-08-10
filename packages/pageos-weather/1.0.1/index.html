@@ -398,16 +398,22 @@
         let html = `
             <h2>${area.areaName[0].value}天气</h2>
             <div class="weather-detail">
-              <strong>当前天气:</strong> ${current.weatherDesc[0].value}
+              <strong>当前天气:</strong> ${
+                current.lang_zh[0].value || current.weatherDesc[0].value
+              }
             </div>
             <div class="weather-detail">
-              <strong>温度:</strong> ${current.temp_C}°C (体感 ${current.FeelsLikeC}°C)
+              <strong>温度:</strong> ${current.temp_C}°C (体感 ${
+          current.FeelsLikeC
+        }°C)
             </div>
             <div class="weather-detail">
               <strong>湿度:</strong> ${current.humidity}%
             </div>
             <div class="weather-detail">
-              <strong>风速:</strong> ${current.windspeedKmph} km/h (${current.winddir16Point})
+              <strong>风速:</strong> ${current.windspeedKmph} km/h (${
+          current.winddir16Point
+        })
             </div>
             <div class="weather-detail">
               <strong>降水量:</strong> ${current.precipMM} mm
