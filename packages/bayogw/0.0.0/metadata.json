@@ -1,0 +1,18 @@
+{
+  "name": "bayo 团队",
+  "id": "bayogw",
+  "version": "0.0.0",
+  "description": "关于 bayo 团队",
+  "icon": "icon.svg",
+  "author": "BayoOS",
+  "type": "webapp",
+  "category": "info",
+  "permissions": [],
+  "entry": "index.html",
+  "all_files": {
+    "script.js": "41d375e7497ef2be7b052f16edf95a083fc5c4b248aeef2e2539d14bd17a675a",
+    "project.zip": "d8679f5ba73434f94d3f412d5fa5284baf7cebcb227caa1479c50570c78616c8",
+    "index.html": "3dd806a6b567ed9d6556afa7c19986e60ba77012e58fa203b3d12f7222c50535",
+    "icon.svg": "ccef7ebb9abfbf7c4faab1eb14a541f38a06959e3090d0ea314c18db925216f1"
+  }
+}
