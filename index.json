@@ -32,9 +32,9 @@
       "name": "zx LeafOS",
       "icon": "icon.svg",
       "author": "zx34",
-      "latest_version": "beta1.5",
+      "latest_version": "beta1.5.1",
       "description": "一个多功能的 ScratchOS",
-      "location": "./packages/zxos-ui/beta1.5"
+      "location": "./packages/zxos-ui/beta1.5.1"
     },
     {
       "id": "bayoos-ui",

@@ -1,7 +1,7 @@
 {
   "name": "zx LeafOS",
   "id": "zxos-ui",
-  "version": "beta1.5",
+  "version": "beta1.5.1",
   "description": "一个多功能的 ScratchOS",
   "icon": "icon.svg",
   "author": "zx34",
@@ -10,7 +10,7 @@
   "permissions": [],
   "entry": "index.html",
   "all_files": {
-    "index.html": "7b28d42ff06cdbee974b73364ab10e712144a7b5fe3224ae4baf20082bd4824d",
+    "index.html": "9a533d4b1303f3244af933698b48f1801f418053cb09df04890896e07f02dee1",
     "icon.svg": "d20c5e6c8f7b9ebfa4cddf15b86d3e9ddc70165ff98ba131e872b27e7ed03778"
   }
 }
